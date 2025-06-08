@@ -7,7 +7,7 @@ interface UpgradeStore extends UpgradeState {
   // Upgrade Actions
   purchaseUpgrade: (upgradeId: string, cost: number) => boolean;
   unlockUpgrade: (upgradeId: string) => void;
-  checkUnlockConditions: (gameStats: any) => void;
+  checkUnlockConditions: (gameStats: GameState) => void;
   
   // Getters
   getUpgrade: (upgradeId: string) => Upgrade | undefined;

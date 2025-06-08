@@ -1,12 +1,12 @@
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
-import { AchievementState, Achievement } from '@/types';
-import { ACHIEVEMENTS, getCompletableAchievements, calculateAchievementProgress } from '@/data/achievements';
+import { AchievementState, Achievement, GameState } from '@/types';
+import { ACHIEVEMENTS, getCompletableAchievements } from '@/data/achievements';
 
 interface AchievementStore extends AchievementState {
   // Achievement Actions
   unlockAchievement: (achievementId: string) => void;
-  checkAchievements: (gameStats: any) => Achievement[];
+  checkAchievements: (gameStats: GameState) => Achievement[];
   updateProgress: (achievementId: string, progress: number) => void;
   
   // Getters

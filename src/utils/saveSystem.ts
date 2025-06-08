@@ -221,7 +221,7 @@ export class SaveSystem {
   }
 
   // Validation
-  private validateSaveData(saveData: any): { isValid: boolean; error?: string } {
+  private validateSaveData(saveData: unknown): { isValid: boolean; error?: string } {
     // Basic structure validation
     if (!saveData || typeof saveData !== 'object') {
       return { isValid: false, error: 'Invalid save data structure' };

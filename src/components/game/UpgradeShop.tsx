@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, ShoppingCart, Lock, Check } from 'lucide-react';
 import { useGameStore, useGameMoney } from '@/stores/gameStore';
 import { useUpgradeStore } from '@/stores/upgradeStore';
+import { Upgrade } from '@/types';
 import { calculateUpgradeCost } from '@/data/upgrades';
 import { UpgradeCategory } from '@/types';
 
@@ -65,7 +66,7 @@ export function UpgradeShop({ isOpen, onClose }: UpgradeShopProps) {
     return `$${cost}`;
   };
 
-  const getUpgradeStatusColor = (upgrade: any) => {
+  const getUpgradeStatusColor = (upgrade: Upgrade) => {
     if (upgrade.isPurchased) return 'border-green-500 bg-green-50';
     if (!upgrade.isUnlocked) return 'border-gray-300 bg-gray-50';
     

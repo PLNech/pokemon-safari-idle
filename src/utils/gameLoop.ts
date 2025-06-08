@@ -1,7 +1,7 @@
 import { useGameStore } from '@/stores/gameStore';
 import { usePokemonStore } from '@/stores/pokemonStore';
 import { getRandomPokemonForArea } from '@/data/pokemon';
-import { AreaType, Pokemon, Trainer } from '@/types';
+import { Pokemon, Trainer } from '@/types';
 
 export class GameLoop {
   private static instance: GameLoop;

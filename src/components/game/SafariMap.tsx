@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useActiveTrainers, useUnlockedAreas } from '@/stores/gameStore';
 import { usePokemonStore } from '@/stores/pokemonStore';
@@ -32,7 +32,7 @@ export function SafariMap() {
   const activeTrainers = useActiveTrainers();
   const unlockedAreas = useUnlockedAreas();
   const { areaPopulations } = usePokemonStore();
-  const animationFrame = useRef<number>();
+  // const animationFrame = useRef<number>(); // TODO: Use for continuous animations
 
   const { config, grid } = mapGridData;
   const { width: gridWidth, height: gridHeight } = config.dimensions;

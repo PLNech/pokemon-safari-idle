@@ -75,7 +75,7 @@ const initialGameState: GameState = {
 };
 
 export const useGameStore = create<GameStore>()(
-  subscribeWithSelector((set, get, api) => ({
+  subscribeWithSelector((set, get) => ({
     ...initialGameState,
     
     // Core Actions
@@ -183,7 +183,7 @@ export const useGameStore = create<GameStore>()(
       if (state.isAutoBellActive && !state.isPaused) {
         // Auto-ring bell based on level
         // Level 1: Every 10 seconds, Level 2: Every 5 seconds, etc.
-        const intervalMs = Math.max(1000, 10000 / state.autoBellLevel);
+        // const intervalMs = Math.max(1000, 10000 / state.autoBellLevel); // TODO: Use for timing
         // This will be called by a game loop interval
         get().ringBell();
       }

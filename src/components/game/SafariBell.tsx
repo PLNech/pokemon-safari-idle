@@ -16,16 +16,15 @@ export function SafariBell({ onRing }: SafariBellProps) {
   const [consecutiveClicks, setConsecutiveClicks] = useState(0);
   const [showPerfectStreak, setShowPerfectStreak] = useState(false);
   const [sparkles, setSparkles] = useState<Array<{ id: number; x: number; y: number; delay: number }>>([]);
-  // TODO: Implement in next phase
-  // const [pokemonAnimations, setPokemonAnimations] = useState<Array<{ 
-  //   id: number; 
-  //   pokemon: string; 
-  //   x: number; 
-  //   y: number; 
-  //   direction: { x: number; y: number } 
-  // }>>([]);
-  // const [isTrainerFrenzy, setIsTrainerFrenzy] = useState(false);
-  // const [frenzyWave, setFrenzyWave] = useState(0);
+  const [pokemonAnimations, setPokemonAnimations] = useState<Array<{ 
+    id: number; 
+    pokemon: string; 
+    x: number; 
+    y: number; 
+    direction: { x: number; y: number } 
+  }>>([]);
+  const [isTrainerFrenzy, setIsTrainerFrenzy] = useState(false);
+  const [frenzyWave, setFrenzyWave] = useState(0);
   
   const { ringBell, isAutoBellActive, autoBellLevel, soundEnabled } = useGameStore();
   const lastClickTime = useRef<number>(0);
@@ -87,7 +86,7 @@ export function SafariBell({ onRing }: SafariBellProps) {
     // TODO: Replace with actual bell sound
     // For now, use Web Audio API to generate a bell-like tone
     try {
-      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const audioContext = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
       
@@ -122,58 +121,57 @@ export function SafariBell({ onRing }: SafariBellProps) {
     setTimeout(() => setSparkles([]), 1000);
   };
 
-  // TODO: Implement in next phase
-  // const spawnPokemonAnimation = () => {
-  //   const pokemonList = ['pikachu', 'bulbasaur', 'charmander', 'squirtle', 'eevee', 'psyduck', 'magikarp', 'dratini'];
-  //   const randomPokemon = pokemonList[Math.floor(Math.random() * pokemonList.length)];
-  //   
-  //   // Random direction from center
-  //   const angle = Math.random() * 2 * Math.PI;
-  //   const distance = 150 + Math.random() * 100; // Distance to travel
-  //   
-  //   const newPokemon = {
-  //     id: Date.now() + Math.random(),
-  //     pokemon: randomPokemon,
-  //     x: 0, // Start at center
-  //     y: 0,
-  //     direction: {
-  //       x: Math.cos(angle) * distance,
-  //       y: Math.sin(angle) * distance
-  //     }
-  //   };
+  const spawnPokemonAnimation = (isPerfect = false) => {
+    const pokemonList = ['pikachu', 'bulbasaur', 'charmander', 'squirtle', 'eevee', 'psyduck', 'magikarp', 'dratini'];
+    const randomPokemon = pokemonList[Math.floor(Math.random() * pokemonList.length)];
+    
+    // Random direction from center
+    const angle = Math.random() * 2 * Math.PI;
+    const distance = isPerfect ? 200 + Math.random() * 150 : 150 + Math.random() * 100; // Longer travel for perfect clicks
+    
+    const newPokemon = {
+      id: Date.now() + Math.random(),
+      pokemon: randomPokemon,
+      x: 0, // Start at center
+      y: 0,
+      direction: {
+        x: Math.cos(angle) * distance,
+        y: Math.sin(angle) * distance
+      }
+    };
 
-  //   setPokemonAnimations(prev => [...prev, newPokemon]);
-  //   
-  //   // Remove after animation completes
-  //   setTimeout(() => {
-  //     setPokemonAnimations(prev => prev.filter(p => p.id !== newPokemon.id));
-  //   }, 2000);
-  // };
+    setPokemonAnimations(prev => [...prev, newPokemon]);
+    
+    // Remove after animation completes
+    setTimeout(() => {
+      setPokemonAnimations(prev => prev.filter(p => p.id !== newPokemon.id));
+    }, 2000);
+  };
 
-  // const triggerTrainerFrenzy = () => {
-  //   setIsTrainerFrenzy(true);
-  //   setFrenzyWave(0);
-  //   
-  //   // Create 10 waves of 10 trainers each, with 1 second between waves
-  //   const spawnWave = (waveIndex: number) => {
-  //     if (waveIndex >= 10) {
-  //       setIsTrainerFrenzy(false);
-  //       return;
-  //     }
-  //     
-  //     setFrenzyWave(waveIndex + 1);
-  //     
-  //     // Spawn 10 trainers for this wave
-  //     for (let i = 0; i < 10; i++) {
-  //       setTimeout(() => ringBell(), i * 100); // Stagger trainers within wave
-  //     }
-  //     
-  //     // Schedule next wave
-  //     setTimeout(() => spawnWave(waveIndex + 1), 1000);
-  //   };
-  //   
-  //   spawnWave(0);
-  // };
+  const triggerTrainerFrenzy = () => {
+    setIsTrainerFrenzy(true);
+    setFrenzyWave(0);
+    
+    // Create 10 waves of 10 trainers each, with 1 second between waves
+    const spawnWave = (waveIndex: number) => {
+      if (waveIndex >= 10) {
+        setIsTrainerFrenzy(false);
+        return;
+      }
+      
+      setFrenzyWave(waveIndex + 1);
+      
+      // Spawn 10 trainers for this wave
+      for (let i = 0; i < 10; i++) {
+        setTimeout(() => ringBell(), i * 100); // Stagger trainers within wave
+      }
+      
+      // Schedule next wave
+      setTimeout(() => spawnWave(waveIndex + 1), 1000);
+    };
+    
+    spawnWave(0);
+  };
 
   const handleBellRing = (isAutoRing = false) => {
     if (isRinging && !isAutoRing) return; // Prevent spam clicking
@@ -193,22 +191,40 @@ export function SafariBell({ onRing }: SafariBellProps) {
         setConsecutiveClicks(prev => prev + 1);
         generateSparkles(true); // Over-the-top sparkles for perfect click
         
-        // Check for perfect streak (5 consecutive perfect clicks)
-        if (consecutiveClicks >= 4) {
-          trainersToAttract = 8; // Trainer Caravan event
+        // Escalating streak rewards system
+        if (consecutiveClicks >= 19) {
+          // 20+ Perfect Clicks: Trainer Frenzy (100 trainers)
+          triggerTrainerFrenzy();
+          setShowPerfectStreak(true);
+          setConsecutiveClicks(0);
+          setTimeout(() => setShowPerfectStreak(false), 5000);
+          spawnPokemonAnimation(true); // Legendary Pokemon animation
+        } else if (consecutiveClicks >= 9) {
+          // 10+ Perfect Clicks: Special Trainers (15 trainers)
+          trainersToAttract = 15;
+          setShowPerfectStreak(true);
+          setConsecutiveClicks(0);
+          setTimeout(() => setShowPerfectStreak(false), 4000);
+          spawnPokemonAnimation(true); // Rare Pokemon animation
+        } else if (consecutiveClicks >= 4) {
+          // 5+ Perfect Clicks: Guaranteed Pokemon (8 trainers)
+          trainersToAttract = 8;
           setShowPerfectStreak(true);
           setConsecutiveClicks(0);
           setTimeout(() => setShowPerfectStreak(false), 3000);
+          spawnPokemonAnimation(true); // Guaranteed Pokemon animation
         }
       } else if (glowIntensity > 0.5) {
         // Good timing during glow
         clickQuality = 'golden';
         trainersToAttract = 1;
         generateSparkles(false); // Normal sparkles for good timing
+        spawnPokemonAnimation(false); // Normal Pokemon animation
         setConsecutiveClicks(0);
       } else {
         // Normal click
         generateSparkles(false); // Light sparkles for normal click
+        spawnPokemonAnimation(false); // Light Pokemon animation
         setConsecutiveClicks(0);
       }
     }
@@ -287,7 +303,9 @@ export function SafariBell({ onRing }: SafariBellProps) {
             exit={{ opacity: 0, scale: 0.5, y: -20 }}
             className="bg-purple-500 text-white px-4 py-2 rounded-lg font-bold"
           >
-            🎉 TRAINER CARAVAN! 8 Trainers Arriving! 🎉
+            {consecutiveClicks >= 19 ? '🎪 TRAINER FRENZY! 100+ Trainers! 🎪' :
+             consecutiveClicks >= 9 ? '👥 SPECIAL TRAINERS! 15 Arriving! 👥' :
+             '🎉 TRAINER CARAVAN! 8 Trainers Arriving! 🎉'}
           </motion.div>
         )}
       </AnimatePresence>
@@ -297,7 +315,10 @@ export function SafariBell({ onRing }: SafariBellProps) {
         <div className="flex items-center space-x-1 text-purple-600">
           <Zap size={16} />
           <span className="text-sm font-semibold">
-            Perfect Streak: {consecutiveClicks}/5
+            Perfect Streak: {consecutiveClicks} 
+            {consecutiveClicks >= 20 ? ' (MAX!)' : 
+             consecutiveClicks >= 10 ? ` → Special Trainers at 10` : 
+             ` → Caravan at 5`}
           </span>
         </div>
       )}
@@ -394,6 +415,46 @@ export function SafariBell({ onRing }: SafariBellProps) {
             }}
           >
             ✨
+          </motion.div>
+        ))}
+      </AnimatePresence>
+
+      {/* Pokemon Animations */}
+      <AnimatePresence>
+        {pokemonAnimations.map((pokemon) => (
+          <motion.div
+            key={pokemon.id}
+            initial={{ 
+              opacity: 0,
+              scale: 0,
+              x: pokemon.x,
+              y: pokemon.y
+            }}
+            animate={{ 
+              opacity: [0, 1, 1, 0],
+              scale: [0, 1.2, 1, 0.8],
+              x: pokemon.direction.x,
+              y: pokemon.direction.y,
+              rotate: [0, 360]
+            }}
+            exit={{ opacity: 0, scale: 0 }}
+            transition={{ 
+              duration: 2,
+              ease: "easeOut",
+              scale: { duration: 0.5 },
+              rotate: { duration: 2, ease: "linear" }
+            }}
+            className="absolute pointer-events-none"
+            style={{
+              left: '50%',
+              top: '50%',
+              transform: 'translate(-50%, -50%)',
+              zIndex: 10
+            }}
+          >
+            <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-xs border-2 border-white shadow-lg">
+              🐾
+            </div>
           </motion.div>
         ))}
       </AnimatePresence>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface SplashScreenProps {
@@ -11,7 +11,7 @@ interface SplashScreenProps {
 export function SplashScreen({ isVisible, onComplete }: SplashScreenProps) {
   const [currentStep, setCurrentStep] = useState(0);
 
-  const steps = [
+  const steps = useMemo(() => [
     {
       title: "Bienvenue dans",
       subtitle: "Safari Zone Tycoon",
@@ -36,7 +36,7 @@ export function SplashScreen({ isVisible, onComplete }: SplashScreenProps) {
       description: "Tap anywhere to start managin'",
       emoji: "🚀"
     }
-  ];
+  ], []);
 
   useEffect(() => {
     if (isVisible) {      
