@@ -75,7 +75,7 @@ const initialGameState: GameState = {
 };
 
 export const useGameStore = create<GameStore>()(
-  subscribeWithSelector((set, get, api) => ({
+  subscribeWithSelector((set, get, _api) => ({
     ...initialGameState,
     
     // Core Actions
@@ -183,7 +183,6 @@ export const useGameStore = create<GameStore>()(
       if (state.isAutoBellActive && !state.isPaused) {
         // Auto-ring bell based on level
         // Level 1: Every 10 seconds, Level 2: Every 5 seconds, etc.
-        const intervalMs = Math.max(1000, 10000 / state.autoBellLevel);
         // This will be called by a game loop interval
         get().ringBell();
       }
@@ -217,7 +216,7 @@ export const useGameStore = create<GameStore>()(
       }, notification.duration || 3000);
     },
     
-    removeNotification: (id: string) => {
+    removeNotification: (_id: string) => {
       // Notifications are managed by UI state store
       // This is a placeholder for the notification system
     },
@@ -275,7 +274,7 @@ export const useGameStats = () => useGameStore(gameStatsSelector);
 
 // Auto-save integration hook
 export const useAutoSave = () => {
-  const gameState = useGameStore();
+  const _gameState = useGameStore();
   
   // TODO: Integrate with save system
   // This will trigger auto-saves when game state changes

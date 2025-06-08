@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useActiveTrainers, useUnlockedAreas } from '@/stores/gameStore';
 import { usePokemonStore } from '@/stores/pokemonStore';
@@ -212,7 +212,7 @@ export function SafariMap() {
           className="text-sm border border-gray-300 rounded-lg px-3 py-1 bg-white"
         >
           <option value="all">All Areas</option>
-          {Object.entries(config.areas).map(([areaName, areaConfig]) => (
+          {Object.entries(config.areas).map(([areaName, _]) => (
             <option 
               key={areaName} 
               value={areaName}

@@ -1,12 +1,12 @@
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
-import { AchievementState, Achievement } from '@/types';
-import { ACHIEVEMENTS, getCompletableAchievements, calculateAchievementProgress } from '@/data/achievements';
+import { AchievementState, Achievement, GameState } from '@/types';
+import { ACHIEVEMENTS, getCompletableAchievements } from '@/data/achievements';
 
 interface AchievementStore extends AchievementState {
   // Achievement Actions
   unlockAchievement: (achievementId: string) => void;
-  checkAchievements: (gameStats: any) => Achievement[];
+  checkAchievements: (gameStats: Partial<GameState>) => Achievement[];
   updateProgress: (achievementId: string, progress: number) => void;
   
   // Getters
@@ -52,7 +52,7 @@ export const useAchievementStore = create<AchievementStore>()(
       // - unlock_feature: Enable new game features
     },
     
-    checkAchievements: (gameStats) => {
+    checkAchievements: (gameStats: Partial<GameState>) => {
       const completableAchievements = getCompletableAchievements({
         trainersAttracted: gameStats.trainersAttracted || 0,
         totalRevenue: gameStats.totalRevenue || 0,

@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 import { PokemonState, AreaType, Pokemon, PokemonSpecies, AreaPokemonPopulation } from '@/types';
-import { safariZonePokemon, getPokemonById, INITIAL_AREA_POPULATIONS } from '@/data/pokemon';
+import { getPokemonById, INITIAL_AREA_POPULATIONS } from '@/data/pokemon';
 
 interface PokemonStore extends PokemonState {
   // Population Management

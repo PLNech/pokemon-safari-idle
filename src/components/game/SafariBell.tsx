@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bell, Zap } from 'lucide-react';
 import { useGameStore } from '@/stores/gameStore';
@@ -81,7 +81,7 @@ export function SafariBell({ onRing }: SafariBellProps) {
     return () => clearInterval(autoBellInterval);
   }, [isAutoBellActive, autoBellLevel, handleBellRing]);
 
-  const playBellSound = () => {
+  const playBellSound = useCallback(() => {
     if (!soundEnabled) return;
     
     // TODO: Replace with actual bell sound
@@ -105,9 +105,9 @@ export function SafariBell({ onRing }: SafariBellProps) {
     } catch (error) {
       console.log('Could not play bell sound:', error);
     }
-  };
+  }, [soundEnabled]);
 
-  const generateSparkles = (isPerfect = false) => {
+  const generateSparkles = useCallback((isPerfect = false) => {
     const sparkleCount = isPerfect ? 12 : 6;
     const newSparkles = Array.from({ length: sparkleCount }, (_, i) => ({
       id: Date.now() + i,
@@ -120,7 +120,7 @@ export function SafariBell({ onRing }: SafariBellProps) {
     
     // Clear sparkles after animation
     setTimeout(() => setSparkles([]), 1000);
-  };
+  }, [setSparkles]);
 
   // TODO: Implement in next phase
   // const spawnPokemonAnimation = () => {
@@ -175,7 +175,7 @@ export function SafariBell({ onRing }: SafariBellProps) {
   //   spawnWave(0);
   // };
 
-  const handleBellRing = (isAutoRing = false) => {
+  const handleBellRing = useCallback((isAutoRing = false) => {
     if (isRinging && !isAutoRing) return; // Prevent spam clicking
 
     const now = Date.now();
@@ -232,7 +232,19 @@ export function SafariBell({ onRing }: SafariBellProps) {
 
     // Callback
     onRing?.();
-  };
+  }, [
+    isRinging,
+    consecutiveClicks,
+    glowIntensity,
+    ringBell,
+    onRing,
+    playBellSound,
+    generateSparkles,
+    setConsecutiveClicks,
+    setShowPerfectStreak,
+    setBellEffect,
+    setIsRinging
+  ]);
 
   const getBellColor = () => {
     if (isRinging) {
