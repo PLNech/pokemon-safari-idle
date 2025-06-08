@@ -262,12 +262,16 @@ export const useGamePhase = () => useGameStore((state) => state.phase);
 export const useTrainerCount = () => useGameStore((state) => state.trainersAttracted);
 export const useActiveTrainers = () => useGameStore((state) => state.activeTrainers);
 export const useUnlockedAreas = () => useGameStore((state) => state.unlockedAreas);
-export const useGameStats = () => useGameStore((state) => ({
+
+// Fixed selector with stable reference for SSR
+const gameStatsSelector = (state: GameStore) => ({
   money: state.money,
   trainersAttracted: state.trainersAttracted,
   totalPokemonCaught: state.totalPokemonCaught,
   averageSatisfaction: state.averageSatisfaction,
-}));
+});
+
+export const useGameStats = () => useGameStore(gameStatsSelector);
 
 // Auto-save integration hook
 export const useAutoSave = () => {

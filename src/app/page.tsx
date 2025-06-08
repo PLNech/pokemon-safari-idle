@@ -1,103 +1,115 @@
-import Image from "next/image";
+'use client';
+
+import { useEffect } from 'react';
+import { GameLayout } from '@/components/layout/GameLayout';
+import { SafariBell } from '@/components/game/SafariBell';
+import { TrainerDisplay } from '@/components/game/TrainerDisplay';
+import { AreaDisplay } from '@/components/game/AreaDisplay';
+import { usePokemonStore } from '@/stores/pokemonStore';
+import { useUnlockedAreas } from '@/stores/gameStore';
+import { saveSystem } from '@/utils/saveSystem';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const { initializeAreas } = usePokemonStore();
+  const unlockedAreas = useUnlockedAreas();
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  // Initialize game on mount
+  useEffect(() => {
+    // Initialize Pokemon areas with data
+    initializeAreas();
+    
+    // Enable auto-save
+    saveSystem.enableAutoSave(30); // Auto-save every 30 seconds
+    
+    // Try to load existing save
+    const loadGame = async () => {
+      try {
+        const saveData = await saveSystem.loadGame();
+        if (saveData) {
+          console.log('Game loaded successfully');
+          // TODO: Apply save data to stores
+        } else {
+          console.log('No save data found, starting new game');
+        }
+      } catch (error) {
+        console.error('Failed to load game:', error);
+        // TODO: Show error notification to user
+      }
+    };
+
+    loadGame();
+
+    // Cleanup on unmount
+    return () => {
+      saveSystem.disableAutoSave();
+    };
+  }, [initializeAreas]);
+
+  return (
+    <GameLayout>
+      {/* Game Introduction */}
+      <div className="text-center mb-8 pt-24">
+        <h1 className="text-3xl font-bold text-green-800 mb-2">
+          🌿 Safari Zone Tycoon 🌿
+        </h1>
+        <p className="text-green-600 max-w-md mx-auto">
+          Welcome, Safari Zone Manager! Ring the bell to attract trainers and build your Pokemon paradise.
+        </p>
+      </div>
+
+      {/* Main Game Area */}
+      <div className="space-y-8">
+        {/* Safari Bell - Center Stage */}
+        <div className="flex justify-center">
+          <SafariBell />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+
+        {/* Areas Display */}
+        <div className="space-y-6">
+          {/* Center Area - Always unlocked */}
+          <AreaDisplay area="center" isUnlocked={true} />
+          
+          {/* Other areas based on unlock status */}
+          <AreaDisplay area="east" isUnlocked={unlockedAreas.includes('east')} />
+          <AreaDisplay area="north" isUnlocked={unlockedAreas.includes('north')} />
+          <AreaDisplay area="west" isUnlocked={unlockedAreas.includes('west')} />
+        </div>
+
+        {/* Active Trainers Display */}
+        <TrainerDisplay />
+
+        {/* Quick Actions */}
+        <div className="grid grid-cols-2 gap-4">
+          <button className="bg-purple-500 hover:bg-purple-600 text-white rounded-xl p-4 text-center transition-colors">
+            <div className="text-2xl mb-2">🛒</div>
+            <div className="font-semibold">Upgrades</div>
+            <div className="text-xs opacity-80">Improve your park</div>
+          </button>
+          
+          <button className="bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl p-4 text-center transition-colors">
+            <div className="text-2xl mb-2">🏆</div>
+            <div className="font-semibold">Achievements</div>
+            <div className="text-xs opacity-80">View progress</div>
+          </button>
+        </div>
+
+        {/* Tutorial/Help Section */}
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+          <div className="flex items-start space-x-3">
+            <div className="text-2xl">💡</div>
+            <div>
+              <h4 className="font-semibold text-blue-800 mb-1">Getting Started</h4>
+              <ul className="text-sm text-blue-700 space-y-1">
+                <li>• Ring the bell to attract trainers to your Safari Zone</li>
+                <li>• Watch for the golden flash for perfect timing (2x trainers!)</li>
+                <li>• Chain 5 perfect clicks for a Trainer Caravan (8 trainers)</li>
+                <li>• Collect entry fees and upgrade your facilities</li>
+                <li>• Unlock new areas with rare Pokemon as you progress</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </GameLayout>
   );
 }

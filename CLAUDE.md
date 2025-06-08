@@ -280,6 +280,24 @@ This allows easy searching and replacement when actual assets are available.
 
 ## Git Workflow
 
+### Commit Early, Commit Often Philosophy
+**IMPORTANT**: Use git profusely throughout development to track progress and enable easy state comparison.
+
+**When to Commit:**
+- After implementing any new feature (`feat:`)
+- After fixing any bug or issue (`fix:`)
+- After refactoring code (`refactor:`)
+- After adding tests (`test:`)
+- After updating documentation (`docs:`)
+- After any significant code change
+
+**Benefits:**
+- Easy rollback to working states
+- Clear development history
+- Ability to compare different approaches
+- Safe experimentation with new features
+- Better collaboration and code review
+
 ### Branch Strategy
 - `main`: Production-ready code
 - `develop`: Integration branch
@@ -287,9 +305,19 @@ This allows easy searching and replacement when actual assets are available.
 - `bugfix/*`: Bug fixes
 
 ### Commit Messages
-- Follow conventional commits
+- Follow conventional commits format
+- Use descriptive commit messages
 - Include test coverage in commits
 - Reference TODO items when relevant
+
+**Examples:**
+```bash
+feat: implement trainer simulation with Pokemon encounters
+fix: resolve localStorage SSR issue in save system
+refactor: optimize Pokemon population display component
+test: add E2E tests for bell clicking mechanism
+docs: update CLAUDE.md with git workflow guidelines
+```
 
 ---
 

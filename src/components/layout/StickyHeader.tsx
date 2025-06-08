@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Bell, Settings, Save, RotateCcw } from 'lucide-react';
 import { useGameStats } from '@/stores/gameStore';
-import { useSaveSystem } from '@/utils/saveSystem';
+import { useSaveSystem } from '@/hooks/useSaveSystem';
 
 export function StickyHeader() {
   const [isScrolled, setIsScrolled] = useState(false);
