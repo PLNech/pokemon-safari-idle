@@ -107,17 +107,25 @@ export interface Achievement {
   id: string;
   name: string;
   description: string;
-  category: 'early' | 'progression' | 'collection' | 'mastery';
+  category: 'progression' | 'activity' | 'pokemon' | 'skill' | 'trainers' | 'quality' | 'secret';
   requirement: AchievementRequirement;
   reward: AchievementReward;
   isUnlocked: boolean;
   unlockedAt?: Date;
-  // TODO: Replace with actual icon
+  isSecret?: boolean;
   icon: string;
 }
 
 export interface AchievementRequirement {
-  type: 'trainers_attracted' | 'money_earned' | 'pokemon_caught' | 'areas_unlocked' | 'upgrades_purchased';
+  type: 'trainers_attracted' | 'money_earned' | 'money_total' | 'pokemon_caught' | 'areas_unlocked' | 'upgrades_purchased' |
+        'bell_rings' | 'perfect_clicks' | 'perfect_streak_5' | 'perfect_streak_10' | 'perfect_streak_20' |
+        'trainer_caravans' | 'trainer_frenzies' | 'trainer_type_casual' | 'trainer_type_collector' |
+        'trainer_type_speedrunner' | 'trainer_type_shiny_hunter' | 'rare_trainer_attracted' |
+        'pokemon_type_grass' | 'pokemon_type_water' | 'pokemon_type_fire' | 'pokemon_type_electric' |
+        'pokemon_type_psychic' | 'rare_pokemon_caught' | 'ultra_rare_pokemon_caught' | 'legendary_pokemon_caught' |
+        'shiny_pokemon_caught' | 'satisfaction_average' | 'bell_rings_midnight' | 'bell_rings_dawn' |
+        'rapid_clicks' | 'no_clicks_duration' | 'konami_code' | 'all_trainer_types_same_day' |
+        'attract_50_trainers_minimal_clicks' | 'visit_all_areas_specific_order' | 'complete_all_non_secret_achievements';
   target: number;
   currentProgress: number;
 }

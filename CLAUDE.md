@@ -13,6 +13,8 @@
 ### Development Environment
 - **Turbo Reload**: Development server runs continuously with `npm run dev` and auto-reloads on file changes
 - **Pokemon Images**: Real Pokemon images from dataset located in `public/pokemon/` directory
+- **Development Server**: User maintains their own dev server - Claude should NOT start/stop servers
+- **Testing Approach**: Claude can suggest testing commands but user will run them when ready
 
 ### Development Philosophy
 - **TDD Approach**: Write tests first, implement features second
@@ -345,6 +347,45 @@ const backgroundImage = "url('data:image/svg+xml,<svg>...</svg>')";
 ```
 
 This allows easy searching and replacement when actual assets are available.
+
+## TODO Management Ritual
+
+### Public TODO Synchronization
+**IMPORTANT**: Maintain a public TODO.md file synchronized with internal TODO tracking.
+
+**Structure:**
+```markdown
+# Safari Zone Tycoon - TODO List
+
+## Critical 🔥
+- High priority bugs and blockers
+- Performance issues
+- Security concerns
+
+## Major 📋
+- New features and enhancements
+- Major refactoring
+- Integration requirements
+
+## Minor 🔧
+- UI improvements
+- Code cleanup
+- Documentation updates
+
+## Ideas 💡
+- Future features
+- Experimental concepts
+- Long-term vision items
+```
+
+**Ritual Process:**
+1. **After each development session**: Update TODO.md with current priorities
+2. **Before starting work**: Review and reorganize TODO.md by priority
+3. **Weekly planning**: Reassess Critical/Major/Minor categories
+4. **Use emojis and clear descriptions** for quick scanning
+5. **Mark completed items** with ✅ before removing them
+
+This keeps stakeholders informed and provides transparency into development progress.
 
 ## Git Workflow
 

@@ -9,6 +9,8 @@ import { UpgradeShop } from '@/components/game/UpgradeShop';
 import { AchievementDisplay } from '@/components/game/AchievementDisplay';
 import { SafariMap } from '@/components/game/SafariMap';
 import { SplashScreen } from '@/components/ui/SplashScreen';
+import { DebugPanel } from '@/components/ui/DebugPanel';
+import { AchievementNotificationBridge } from '@/components/game/AchievementNotificationBridge';
 import { usePokemonStore } from '@/stores/pokemonStore';
 import { useUnlockedAreas } from '@/stores/gameStore';
 import { useProgressionGoals } from '@/hooks/useProgressionGoals';
@@ -224,13 +226,35 @@ export default function Home() {
 
       <GameLayout onTabChange={handleTabChange}>
         {/* Game Introduction */}
-        <div className="text-center mb-8 pt-24">
-          <h1 className="text-3xl font-bold text-green-800 mb-2">
-            🌿 Safari Zone Tycoon 🌿
-          </h1>
-          <p className="text-green-600 max-w-md mx-auto">
-            Welcome, Safari Zone Manager! Ring the bell to attract trainers and build your Pokemon paradise.
-          </p>
+        <div 
+          className="text-center mb-8 pt-24 relative overflow-hidden rounded-xl mx-4"
+          style={{
+            backgroundImage: 'url(/grass.jpg)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            filter: 'blur(0px)', // Base image
+          }}
+        >
+          {/* Blur overlay for readability */}
+          <div 
+            className="absolute inset-0 backdrop-blur-sm bg-white/30"
+            style={{
+              backdropFilter: 'blur(4px)',
+            }}
+          />
+          
+          {/* Content over background */}
+          <div className="relative z-10 py-8 px-4">
+            <h1 
+              className="text-4xl font-bold text-green-900 mb-3 drop-shadow-lg"
+              style={{ fontFamily: 'Pokemon' }}
+            >
+              🌿 Safari Zone Tycoon 🌿
+            </h1>
+            <p className="text-green-800 max-w-md mx-auto text-lg font-medium drop-shadow-md">
+              Welcome, Safari Zone Manager! Ring the bell to attract trainers and build your Pokemon paradise.
+            </p>
+          </div>
         </div>
 
         {/* Tab Content */}
@@ -247,6 +271,12 @@ export default function Home() {
           isOpen={isAchievementDisplayOpen} 
           onClose={() => setIsAchievementDisplayOpen(false)} 
         />
+
+        {/* Debug Panel (dev only) */}
+        <DebugPanel />
+
+        {/* Achievement Notification Bridge */}
+        <AchievementNotificationBridge />
       </GameLayout>
     </>
   );

@@ -82,14 +82,14 @@ export function UpgradeShop({ isOpen, onClose }: UpgradeShopProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/50 z-[60] flex items-end justify-center p-4 pt-32"
           onClick={onClose}
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden"
+            className="bg-white rounded-xl shadow-xl max-w-[90vw] w-full max-h-[60vh] overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}

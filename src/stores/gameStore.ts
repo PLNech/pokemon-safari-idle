@@ -112,6 +112,16 @@ export const useGameStore = create<GameStore>()(
       set((state) => ({
         activeTrainers: [...state.activeTrainers, newTrainer],
         trainersAttracted: state.trainersAttracted + 1,
+        notifications: generatedTrainer.rarity && generatedTrainer.rarity !== 'common' 
+          ? [...state.notifications, {
+              id: `trainer-${newTrainer.id}`,
+              type: 'trainer_rare' as const,
+              message: `${generatedTrainer.rarity.toUpperCase()} trainer arrived: ${generatedTrainer.name}!`,
+              timestamp: Date.now(),
+              duration: 5000,
+              data: { trainer: generatedTrainer }
+            }]
+          : state.notifications,
       }));
     },
     

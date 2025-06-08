@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Trophy, Lock, Check } from 'lucide-react';
+import { X, Trophy, Lock, Check, Filter, Eye, EyeOff } from 'lucide-react';
 import { useAchievementStore } from '@/stores/achievementStore';
-import { ACHIEVEMENTS, calculateAchievementProgress } from '@/data/achievements';
+import { ACHIEVEMENTS_EXPANDED } from '@/data/achievementsExpanded';
 import { useClientSafeGameStats } from '@/hooks/useClientSafeStore';
 import { Achievement, AchievementReward } from '@/types';
 
@@ -14,31 +14,66 @@ interface AchievementDisplayProps {
 }
 
 export function AchievementDisplay({ isOpen, onClose }: AchievementDisplayProps) {
-  const [selectedCategory, setSelectedCategory] = useState<string>('early');
+  const [selectedCategory, setSelectedCategory] = useState<string>('progression');
+  const [showOnlyUnlocked, setShowOnlyUnlocked] = useState<boolean>(true);
+  const [showSecrets, setShowSecrets] = useState<boolean>(false);
   const { unlockedAchievements } = useAchievementStore();
   const gameStats = useClientSafeGameStats();
 
   const categories = [
-    { id: 'early', name: 'Early', icon: '🚀', color: 'bg-green-500' },
     { id: 'progression', name: 'Progress', icon: '📈', color: 'bg-blue-500' },
-    { id: 'collection', name: 'Collection', icon: '📚', color: 'bg-purple-500' },
-    { id: 'mastery', name: 'Mastery', icon: '👑', color: 'bg-yellow-500' },
+    { id: 'activity', name: 'Activity', icon: '🎯', color: 'bg-green-500' },
+    { id: 'pokemon', name: 'Pokemon', icon: '🐾', color: 'bg-purple-500' },
+    { id: 'skill', name: 'Skill', icon: '⚡', color: 'bg-yellow-500' },
+    { id: 'trainers', name: 'Trainers', icon: '👥', color: 'bg-pink-500' },
+    { id: 'quality', name: 'Quality', icon: '⭐', color: 'bg-orange-500' },
+    { id: 'secret', name: 'Secret', icon: '🔮', color: 'bg-gray-700' },
   ];
 
-  const filteredAchievements = ACHIEVEMENTS.filter(
-    achievement => achievement.category === selectedCategory
-  );
+  const filteredAchievements = useMemo(() => {
+    let achievements = ACHIEVEMENTS_EXPANDED.filter(achievement => {
+      // Category filter
+      if (achievement.category !== selectedCategory) return false;
+      
+      // Secret filter
+      if (achievement.isSecret && !showSecrets) return false;
+      if (!achievement.isSecret && selectedCategory === 'secret') return false;
+      
+      // Unlocked filter
+      if (showOnlyUnlocked && !achievement.isUnlocked) return false;
+      
+      return true;
+    });
+    
+    // Sort by unlock status, then by progress
+    return achievements.sort((a, b) => {
+      if (a.isUnlocked !== b.isUnlocked) {
+        return a.isUnlocked ? -1 : 1;
+      }
+      return getAchievementProgress(b) - getAchievementProgress(a);
+    });
+  }, [selectedCategory, showOnlyUnlocked, showSecrets]);
 
   const getAchievementProgress = (achievement: Achievement) => {
-    const progress = calculateAchievementProgress(achievement, {
-      trainersAttracted: gameStats.trainersAttracted,
-      totalRevenue: 0, // TODO: Add totalRevenue to gameStats
-      totalPokemonCaught: gameStats.totalPokemonCaught,
-      averageSatisfaction: gameStats.averageSatisfaction,
-      unlockedAreas: 1, // TODO: Calculate from unlocked areas
-      rarePokemonCaught: 0, // TODO: Track rare Pokemon
-      shinyPokemonCaught: 0, // TODO: Track shiny Pokemon
-    });
+    // Simple progress calculation for now
+    let progress = 0;
+    
+    switch (achievement.requirement.type) {
+      case 'trainers_attracted':
+        progress = gameStats.trainersAttracted;
+        break;
+      case 'pokemon_caught':
+        progress = gameStats.totalPokemonCaught;
+        break;
+      case 'money_total':
+        progress = gameStats.money;
+        break;
+      case 'satisfaction_average':
+        progress = Math.round(gameStats.averageSatisfaction * 100);
+        break;
+      default:
+        progress = achievement.requirement.currentProgress;
+    }
     
     return Math.min(100, (progress / achievement.requirement.target) * 100);
   };
@@ -81,14 +116,14 @@ export function AchievementDisplay({ isOpen, onClose }: AchievementDisplayProps)
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/50 z-[60] flex items-end justify-center p-4 pt-32"
           onClick={onClose}
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden"
+            className="bg-white rounded-xl shadow-xl max-w-[90vw] w-full max-h-[60vh] overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
@@ -100,7 +135,7 @@ export function AchievementDisplay({ isOpen, onClose }: AchievementDisplayProps)
                 </div>
                 <div className="flex items-center space-x-4">
                   <div className="text-lg font-semibold">
-                    🏆 {unlockedAchievements.length}/{ACHIEVEMENTS.length}
+                    🏆 {unlockedAchievements.length}/{ACHIEVEMENTS_EXPANDED.length}
                   </div>
                   <button
                     onClick={onClose}
@@ -109,6 +144,29 @@ export function AchievementDisplay({ isOpen, onClose }: AchievementDisplayProps)
                     <X size={20} />
                   </button>
                 </div>
+              </div>
+              
+              {/* Filter Controls */}
+              <div className="flex items-center space-x-4 mt-4">
+                <button
+                  onClick={() => setShowOnlyUnlocked(!showOnlyUnlocked)}
+                  className={`flex items-center space-x-2 px-3 py-1 rounded-md transition-colors ${
+                    showOnlyUnlocked ? 'bg-white/20 text-white' : 'bg-white/10 text-white/70'
+                  }`}
+                >
+                  {showOnlyUnlocked ? <Eye size={16} /> : <EyeOff size={16} />}
+                  <span className="text-sm">Unlocked Only</span>
+                </button>
+                
+                <button
+                  onClick={() => setShowSecrets(!showSecrets)}
+                  className={`flex items-center space-x-2 px-3 py-1 rounded-md transition-colors ${
+                    showSecrets ? 'bg-white/20 text-white' : 'bg-white/10 text-white/70'
+                  }`}
+                >
+                  <Filter size={16} />
+                  <span className="text-sm">Show Secrets</span>
+                </button>
               </div>
             </div>
 
@@ -119,7 +177,7 @@ export function AchievementDisplay({ isOpen, onClose }: AchievementDisplayProps)
                   <h3 className="font-semibold text-gray-700 mb-3">Categories</h3>
                   <div className="space-y-2">
                     {categories.map((category) => {
-                      const categoryAchievements = ACHIEVEMENTS.filter(a => a.category === category.id);
+                      const categoryAchievements = ACHIEVEMENTS_EXPANDED.filter(a => a.category === category.id);
                       const unlockedCount = categoryAchievements.filter(a => a.isUnlocked).length;
 
                       return (
