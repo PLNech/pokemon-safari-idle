@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Safari Zone Tycoon",
-  description: "Build and manage the ultimate Pokemon Safari Zone experience",
+  description: "Pokemon Safari Zone - L'incr manager game",
 };
 
 export const viewport = {

@@ -13,27 +13,27 @@ export function SplashScreen({ isVisible, onComplete }: SplashScreenProps) {
 
   const steps = [
     {
-      title: "Welcome to",
+      title: "Bienvenue dans",
       subtitle: "Safari Zone Tycoon",
-      description: "Build and manage your own Pokemon Safari Zone",
+      description: "Le manager de Pokemon Safari",
       emoji: "🌿"
     },
     {
       title: "Ring the Bell",
-      subtitle: "Attract Trainers",
-      description: "Perfect timing gives 2x trainers and builds streaks",
+      subtitle: "Attract PokeTrainers",
+      description: "Perfect timing gives 2x trainers and builds streaks that attract VIPs",
       emoji: "🔔"
     },
     {
-      title: "Catch Pokemon",
+      title: "Catch Pokemons",
       subtitle: "Expand Your Zone", 
-      description: "Unlock new areas with rare Pokemon species",
+      description: "Unlock new areas with new rare Pokemon species and opportunities",
       emoji: "⚡"
     },
     {
       title: "Ready to Start?",
-      subtitle: "Your Safari Zone Awaits",
-      description: "Tap anywhere to begin your adventure",
+      subtitle: "Safari Zone Awaits",
+      description: "Tap anywhere to start managin'",
       emoji: "🚀"
     }
   ];
