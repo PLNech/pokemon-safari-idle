@@ -1,11 +1,12 @@
 'use client';
 
-import { useGameStats, useGamePhase } from '@/stores/gameStore';
+import { useGamePhase } from '@/stores/gameStore';
+import { useClientSafeGameStats } from '@/hooks/useClientSafeStore';
 import { useProgressionGoals } from '@/hooks/useProgressionGoals';
 import { POKEMON_RARITY_CONFIG } from '@/data/pokemon';
 
 export function GameStats() {
-  const { money, trainersAttracted, totalPokemonCaught, averageSatisfaction } = useGameStats();
+  const { money, trainersAttracted, totalPokemonCaught, averageSatisfaction } = useClientSafeGameStats();
   const phase = useGamePhase();
   const { goals } = useProgressionGoals();
 

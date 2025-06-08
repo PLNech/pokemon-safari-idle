@@ -75,7 +75,7 @@ const initialGameState: GameState = {
 };
 
 export const useGameStore = create<GameStore>()(
-  subscribeWithSelector((set, get) => ({
+  subscribeWithSelector((set, get, api) => ({
     ...initialGameState,
     
     // Core Actions

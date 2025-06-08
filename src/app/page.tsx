@@ -6,6 +6,7 @@ import { SafariBell } from '@/components/game/SafariBell';
 import { TrainerDisplay } from '@/components/game/TrainerDisplay';
 import { AreaDisplay } from '@/components/game/AreaDisplay';
 import { UpgradeShop } from '@/components/game/UpgradeShop';
+import { AchievementDisplay } from '@/components/game/AchievementDisplay';
 import { usePokemonStore } from '@/stores/pokemonStore';
 import { useUnlockedAreas } from '@/stores/gameStore';
 import { useProgressionGoals } from '@/hooks/useProgressionGoals';
@@ -15,6 +16,7 @@ export default function Home() {
   const { initializeAreas } = usePokemonStore();
   const unlockedAreas = useUnlockedAreas();
   const [isUpgradeShopOpen, setIsUpgradeShopOpen] = useState(false);
+  const [isAchievementDisplayOpen, setIsAchievementDisplayOpen] = useState(false);
   
   // Initialize progression tracking
   useProgressionGoals();
@@ -95,7 +97,10 @@ export default function Home() {
             <div className="text-xs opacity-80">Improve your park</div>
           </button>
           
-          <button className="bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl p-4 text-center transition-colors">
+          <button 
+            onClick={() => setIsAchievementDisplayOpen(true)}
+            className="bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl p-4 text-center transition-colors"
+          >
             <div className="text-2xl mb-2">🏆</div>
             <div className="font-semibold">Achievements</div>
             <div className="text-xs opacity-80">View progress</div>
@@ -124,6 +129,12 @@ export default function Home() {
       <UpgradeShop 
         isOpen={isUpgradeShopOpen} 
         onClose={() => setIsUpgradeShopOpen(false)} 
+      />
+
+      {/* Achievement Display Modal */}
+      <AchievementDisplay 
+        isOpen={isAchievementDisplayOpen} 
+        onClose={() => setIsAchievementDisplayOpen(false)} 
       />
     </GameLayout>
   );

@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { Bell, Settings, Save, RotateCcw } from 'lucide-react';
-import { useGameStats } from '@/stores/gameStore';
+import { useClientSafeGameStats } from '@/hooks/useClientSafeStore';
 import { useSaveSystem } from '@/hooks/useSaveSystem';
 
 export function StickyHeader() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const { money, trainersAttracted, totalPokemonCaught } = useGameStats();
+  const { money, trainersAttracted, totalPokemonCaught } = useClientSafeGameStats();
   const { save, hasSaveData } = useSaveSystem();
 
   useEffect(() => {

@@ -122,6 +122,70 @@ interface AchievementState {
 - Handle side effects
 - Reusable across components
 
+## SSR and Hydration Rules
+
+### Static Site Generation (Next.js Export)
+**IMPORTANT**: This project uses static site generation (`output: 'export'`) to avoid SSR complications.
+
+### Zustand Store Hydration
+**RULE**: Always use stable selector references to prevent hydration mismatches.
+
+**Correct Pattern:**
+```typescript
+// Create selector outside component or use useCallback
+const gameStatsSelector = (state: GameStore) => ({
+  money: state.money,
+  trainersAttracted: state.trainersAttracted,
+});
+
+export function MyComponent() {
+  const gameStats = useGameStore(gameStatsSelector);
+  // ...
+}
+```
+
+**Incorrect Pattern:**
+```typescript
+// DON'T do this - creates new function on every render
+export function MyComponent() {
+  const gameStats = useGameStore((state) => ({
+    money: state.money,
+    trainersAttracted: state.trainersAttracted,
+  }));
+  // ...
+}
+```
+
+### Client-Only Patterns
+- Use `'use client'` directive for all interactive components
+- Avoid accessing `window`, `localStorage`, etc. during render
+- Use `useEffect` for client-only initialization
+
+### React Hooks Rules
+**CRITICAL**: Never conditionally call hooks - this violates the Rules of Hooks.
+
+**Incorrect Pattern:**
+```typescript
+// DON'T do this - conditional hook calls
+export function MyComponent() {
+  const [isClient, setIsClient] = useState(false);
+  const money = isClient ? useGameStore(state => state.money) : 1000;
+  // This violates Rules of Hooks!
+}
+```
+
+**Correct Pattern:**
+```typescript
+// Always call hooks unconditionally
+export function MyComponent() {
+  const [isClient, setIsClient] = useState(false);
+  const money = useGameStore(state => state.money);
+  
+  // Use the isClient flag in render, not in hook calls
+  const displayMoney = isClient ? money : 1000;
+}
+```
+
 ## Development Commands
 
 ### Core Commands
