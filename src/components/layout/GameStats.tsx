@@ -1,11 +1,13 @@
 'use client';
 
 import { useGameStats, useGamePhase } from '@/stores/gameStore';
+import { useProgressionGoals } from '@/hooks/useProgressionGoals';
 import { POKEMON_RARITY_CONFIG } from '@/data/pokemon';
 
 export function GameStats() {
   const { money, trainersAttracted, totalPokemonCaught, averageSatisfaction } = useGameStats();
   const phase = useGamePhase();
+  const { goals } = useProgressionGoals();
 
   const formatMoney = (amount: number) => {
     if (amount >= 1000000) {
@@ -91,20 +93,49 @@ export function GameStats() {
       </div>
 
       {/* Phase Progress Bar */}
-      <div className="mt-3 bg-gray-200 rounded-full h-2 overflow-hidden">
-        <div 
-          className="h-full bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-1000"
-          style={{ 
-            width: `${Math.min(100, (trainersAttracted / 10) * 100)}%` 
-          }}
-        />
-      </div>
-      <div className="flex justify-between text-xs text-gray-600 mt-1">
-        <span>Phase: {phase}</span>
-        <span>
-          {/* TODO: Show actual progress goals */}
-          Next: {trainersAttracted < 10 ? '10 trainers for Auto-Bell' : '$5K for Area 1'}
-        </span>
+      <div className="mt-3 space-y-2">
+        {/* Auto-Bell Goal */}
+        {!goals.autoBell.completed && (
+          <div>
+            <div className="flex justify-between text-xs text-gray-600 mb-1">
+              <span>🔔 Auto-Bell Goal</span>
+              <span>{goals.autoBell.current}/{goals.autoBell.target}</span>
+            </div>
+            <div className="bg-gray-200 rounded-full h-2 overflow-hidden">
+              <div 
+                className="h-full bg-gradient-to-r from-blue-400 to-purple-500 transition-all duration-1000"
+                style={{ 
+                  width: `${Math.min(100, (goals.autoBell.current / goals.autoBell.target) * 100)}%` 
+                }}
+              />
+            </div>
+          </div>
+        )}
+        
+        {/* Area Unlock Goal */}
+        {!goals.areaUnlock.completed && (
+          <div>
+            <div className="flex justify-between text-xs text-gray-600 mb-1">
+              <span>🌾 East Area Goal</span>
+              <span>${goals.areaUnlock.current.toLocaleString()}/${goals.areaUnlock.target.toLocaleString()}</span>
+            </div>
+            <div className="bg-gray-200 rounded-full h-2 overflow-hidden">
+              <div 
+                className="h-full bg-gradient-to-r from-green-400 to-emerald-500 transition-all duration-1000"
+                style={{ 
+                  width: `${Math.min(100, (goals.areaUnlock.current / goals.areaUnlock.target) * 100)}%` 
+                }}
+              />
+            </div>
+          </div>
+        )}
+        
+        {/* Completed goals message */}
+        {goals.autoBell.completed && goals.areaUnlock.completed && (
+          <div className="text-center text-xs text-green-600 font-medium">
+            🎉 Phase 1 goals completed! Check upgrades for new opportunities.
+          </div>
+        )}
       </div>
     </div>
   );

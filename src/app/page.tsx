@@ -1,17 +1,23 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { GameLayout } from '@/components/layout/GameLayout';
 import { SafariBell } from '@/components/game/SafariBell';
 import { TrainerDisplay } from '@/components/game/TrainerDisplay';
 import { AreaDisplay } from '@/components/game/AreaDisplay';
+import { UpgradeShop } from '@/components/game/UpgradeShop';
 import { usePokemonStore } from '@/stores/pokemonStore';
 import { useUnlockedAreas } from '@/stores/gameStore';
+import { useProgressionGoals } from '@/hooks/useProgressionGoals';
 import { saveSystem } from '@/utils/saveSystem';
 
 export default function Home() {
   const { initializeAreas } = usePokemonStore();
   const unlockedAreas = useUnlockedAreas();
+  const [isUpgradeShopOpen, setIsUpgradeShopOpen] = useState(false);
+  
+  // Initialize progression tracking
+  useProgressionGoals();
 
   // Initialize game on mount
   useEffect(() => {
@@ -80,7 +86,10 @@ export default function Home() {
 
         {/* Quick Actions */}
         <div className="grid grid-cols-2 gap-4">
-          <button className="bg-purple-500 hover:bg-purple-600 text-white rounded-xl p-4 text-center transition-colors">
+          <button 
+            onClick={() => setIsUpgradeShopOpen(true)}
+            className="bg-purple-500 hover:bg-purple-600 text-white rounded-xl p-4 text-center transition-colors"
+          >
             <div className="text-2xl mb-2">🛒</div>
             <div className="font-semibold">Upgrades</div>
             <div className="text-xs opacity-80">Improve your park</div>
@@ -110,6 +119,12 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* Upgrade Shop Modal */}
+      <UpgradeShop 
+        isOpen={isUpgradeShopOpen} 
+        onClose={() => setIsUpgradeShopOpen(false)} 
+      />
     </GameLayout>
   );
 }
