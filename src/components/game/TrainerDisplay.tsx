@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useActiveTrainers } from '@/stores/gameStore';
 import { gameLoop } from '@/utils/gameLoop';
+import { PokemonImage } from '@/components/ui/PokemonImage';
 
 const TRAINER_EMOJIS = ['🧑‍🦱', '👩‍🦰', '🧑‍🦲', '👨‍🦳', '👩‍🦱', '🧑‍🦰', '👨‍🦱', '👩‍🦳'];
 
@@ -122,7 +123,7 @@ export function TrainerDisplay() {
                       <div
                         key={index}
                         className={`
-                          text-xs px-2 py-1 rounded-full flex items-center space-x-1
+                          text-xs px-2 py-1 rounded-lg flex items-center space-x-1
                           ${pokemon.rarity === 'common' ? 'bg-gray-100 text-gray-700' : ''}
                           ${pokemon.rarity === 'uncommon' ? 'bg-green-100 text-green-700' : ''}
                           ${pokemon.rarity === 'rare' ? 'bg-blue-100 text-blue-700' : ''}
@@ -130,6 +131,12 @@ export function TrainerDisplay() {
                           ${pokemon.rarity === 'legendary' ? 'bg-yellow-100 text-yellow-700' : ''}
                         `}
                       >
+                        <PokemonImage 
+                          pokemonName={pokemon.name} 
+                          size="small" 
+                          fallbackEmoji={pokemon.sprite || '🐾'}
+                          className="shrink-0"
+                        />
                         {pokemon.isShiny && <span>✨</span>}
                         <span>{pokemon.name}</span>
                       </div>

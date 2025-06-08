@@ -4,11 +4,21 @@ import { useState, useEffect } from 'react';
 import { Bell, Settings, Save, RotateCcw } from 'lucide-react';
 import { useClientSafeGameStats } from '@/hooks/useClientSafeStore';
 import { useSaveSystem } from '@/hooks/useSaveSystem';
+import { useGameStore } from '@/stores/gameStore';
+import { usePokemonStore } from '@/stores/pokemonStore';
+import { useAchievementStore } from '@/stores/achievementStore';
+import { ConfirmationDialog } from '@/components/ui/ConfirmationDialog';
+import { SettingsMenu } from '@/components/ui/SettingsMenu';
 
 export function StickyHeader() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [showResetDialog, setShowResetDialog] = useState(false);
+  const [showSettingsMenu, setShowSettingsMenu] = useState(false);
   const { money, trainersAttracted, totalPokemonCaught } = useClientSafeGameStats();
   const { save, hasSaveData } = useSaveSystem();
+  const { resetGame } = useGameStore();
+  const { resetPokemon } = usePokemonStore();
+  const { resetAchievements } = useAchievementStore();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -30,9 +40,25 @@ export function StickyHeader() {
   };
 
   const handleReset = () => {
-    // TODO: Show confirmation dialog
-    if (confirm('Are you sure you want to reset your game? This cannot be undone.')) {
-      // TODO: Reset game state
+    setShowResetDialog(true);
+  };
+
+  const handleConfirmReset = () => {
+    try {
+      // Reset all stores
+      resetGame();
+      resetPokemon();
+      resetAchievements();
+      
+      // Clear localStorage
+      localStorage.removeItem('safari-zone-save');
+      
+      console.log('Game reset successfully');
+      // Force page reload to ensure clean state
+      window.location.reload();
+    } catch (error) {
+      console.error('Failed to reset game:', error);
+      // TODO: Show error notification
     }
   };
 
@@ -115,6 +141,7 @@ export function StickyHeader() {
 
             {/* Settings Button */}
             <button
+              onClick={() => setShowSettingsMenu(true)}
               className="
                 p-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg
                 transition-colors duration-200 touch-manipulation
@@ -141,6 +168,24 @@ export function StickyHeader() {
           </div>
         )}
       </div>
+
+      {/* Settings Menu */}
+      <SettingsMenu
+        isOpen={showSettingsMenu}
+        onClose={() => setShowSettingsMenu(false)}
+      />
+
+      {/* Reset Confirmation Dialog */}
+      <ConfirmationDialog
+        isOpen={showResetDialog}
+        onClose={() => setShowResetDialog(false)}
+        onConfirm={handleConfirmReset}
+        title="Reset Game"
+        message="Are you sure you want to reset your Safari Zone Tycoon game? This will permanently delete all your progress, including money, trainers, Pokemon, upgrades, and achievements. This action cannot be undone."
+        confirmText="Yes, Reset Everything"
+        cancelText="Cancel"
+        type="danger"
+      />
     </header>
   );
 }

@@ -10,6 +10,10 @@
 - **Playwright** for E2E testing
 - **LocalStorage** for save system
 
+### Development Environment
+- **Turbo Reload**: Development server runs continuously with `npm run dev` and auto-reloads on file changes
+- **Pokemon Images**: Real Pokemon images from dataset located in `public/pokemon/` directory
+
 ### Development Philosophy
 - **TDD Approach**: Write tests first, implement features second
 - **MVP Iteration**: Build minimum viable features, then enhance

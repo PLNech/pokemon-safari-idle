@@ -15,6 +15,7 @@ interface UpgradeShopProps {
 
 export function UpgradeShop({ isOpen, onClose }: UpgradeShopProps) {
   const [selectedCategory, setSelectedCategory] = useState<UpgradeCategory>('marketing');
+  const [showPurchased, setShowPurchased] = useState(false);
   const money = useGameMoney();
   const { spendMoney } = useGameStore();
   const { availableUpgrades, purchaseUpgrade, getUpgradeCost } = useUpgradeStore();
@@ -26,9 +27,15 @@ export function UpgradeShop({ isOpen, onClose }: UpgradeShopProps) {
     { id: 'research', name: 'Research', icon: '🔬', color: 'bg-orange-500' },
   ] as const;
 
-  const filteredUpgrades = availableUpgrades.filter(upgrade => 
-    upgrade.category === selectedCategory && upgrade.isUnlocked
-  );
+  const filteredUpgrades = availableUpgrades.filter(upgrade => {
+    const matchesCategory = upgrade.category === selectedCategory && upgrade.isUnlocked;
+    
+    if (showPurchased) {
+      return matchesCategory; // Show all upgrades if toggle is on
+    } else {
+      return matchesCategory && !upgrade.isPurchased; // Hide purchased upgrades by default
+    }
+  });
 
   const handlePurchase = (upgradeId: string) => {
     const cost = getUpgradeCost(upgradeId);
@@ -105,7 +112,7 @@ export function UpgradeShop({ isOpen, onClose }: UpgradeShopProps) {
               </div>
             </div>
 
-            <div className="flex flex-col md:flex-row h-[calc(90vh-120px)]">
+            <div className="flex flex-col md:flex-row h-[calc(80vh-120px)]">
               {/* Category Sidebar */}
               <div className="md:w-64 bg-gray-50 border-r border-gray-200">
                 <div className="p-4">
@@ -113,10 +120,10 @@ export function UpgradeShop({ isOpen, onClose }: UpgradeShopProps) {
                   <div className="space-y-2">
                     {categories.map((category) => {
                       const categoryUpgrades = availableUpgrades.filter(u => 
-                        u.category === category.id && u.isUnlocked
+                        u.category === category.id && u.isUnlocked && !u.isPurchased
                       );
                       const affordableCount = categoryUpgrades.filter(u => 
-                        !u.isPurchased && calculateUpgradeCost(u) <= money
+                        calculateUpgradeCost(u) <= money
                       ).length;
 
                       return (
@@ -143,6 +150,19 @@ export function UpgradeShop({ isOpen, onClose }: UpgradeShopProps) {
                       );
                     })}
                   </div>
+                  
+                  {/* Show Purchased Toggle */}
+                  <div className="mt-6 pt-4 border-t border-gray-300">
+                    <label className="flex items-center space-x-2 text-sm text-gray-600 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={showPurchased}
+                        onChange={(e) => setShowPurchased(e.target.checked)}
+                        className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                      />
+                      <span>Show purchased upgrades</span>
+                    </label>
+                  </div>
                 </div>
               </div>
 
@@ -167,9 +187,21 @@ export function UpgradeShop({ isOpen, onClose }: UpgradeShopProps) {
                       <motion.div
                         key={upgrade.id}
                         layout
+                        initial={upgrade.isPurchased ? { opacity: 1 } : { opacity: 1, y: 0 }}
+                        animate={{ 
+                          opacity: upgrade.isPurchased && !showPurchased ? 0 : 1,
+                          y: 0,
+                          scale: upgrade.isPurchased && !showPurchased ? 0.95 : 1
+                        }}
+                        exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                        transition={{ 
+                          duration: upgrade.isPurchased ? 10 : 0.3,
+                          ease: "easeInOut"
+                        }}
                         className={`
                           border-2 rounded-xl p-4 transition-all
                           ${getUpgradeStatusColor(upgrade)}
+                          ${upgrade.isPurchased && !showPurchased ? 'pointer-events-none' : ''}
                         `}
                       >
                         <div className="flex items-start justify-between">

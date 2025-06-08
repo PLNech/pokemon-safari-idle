@@ -15,6 +15,17 @@ export function SafariBell({ onRing }: SafariBellProps) {
   const [bellEffect, setBellEffect] = useState<'normal' | 'golden' | 'perfect'>('normal');
   const [consecutiveClicks, setConsecutiveClicks] = useState(0);
   const [showPerfectStreak, setShowPerfectStreak] = useState(false);
+  const [sparkles, setSparkles] = useState<Array<{ id: number; x: number; y: number; delay: number }>>([]);
+  // TODO: Implement in next phase
+  // const [pokemonAnimations, setPokemonAnimations] = useState<Array<{ 
+  //   id: number; 
+  //   pokemon: string; 
+  //   x: number; 
+  //   y: number; 
+  //   direction: { x: number; y: number } 
+  // }>>([]);
+  // const [isTrainerFrenzy, setIsTrainerFrenzy] = useState(false);
+  // const [frenzyWave, setFrenzyWave] = useState(0);
   
   const { ringBell, isAutoBellActive, autoBellLevel, soundEnabled } = useGameStore();
   const lastClickTime = useRef<number>(0);
@@ -96,25 +107,91 @@ export function SafariBell({ onRing }: SafariBellProps) {
     }
   };
 
+  const generateSparkles = (isPerfect = false) => {
+    const sparkleCount = isPerfect ? 12 : 6;
+    const newSparkles = Array.from({ length: sparkleCount }, (_, i) => ({
+      id: Date.now() + i,
+      x: Math.random() * 200 - 100, // Random position around bell
+      y: Math.random() * 200 - 100,
+      delay: Math.random() * 0.3, // Stagger animation
+    }));
+    
+    setSparkles(newSparkles);
+    
+    // Clear sparkles after animation
+    setTimeout(() => setSparkles([]), 1000);
+  };
+
+  // TODO: Implement in next phase
+  // const spawnPokemonAnimation = () => {
+  //   const pokemonList = ['pikachu', 'bulbasaur', 'charmander', 'squirtle', 'eevee', 'psyduck', 'magikarp', 'dratini'];
+  //   const randomPokemon = pokemonList[Math.floor(Math.random() * pokemonList.length)];
+  //   
+  //   // Random direction from center
+  //   const angle = Math.random() * 2 * Math.PI;
+  //   const distance = 150 + Math.random() * 100; // Distance to travel
+  //   
+  //   const newPokemon = {
+  //     id: Date.now() + Math.random(),
+  //     pokemon: randomPokemon,
+  //     x: 0, // Start at center
+  //     y: 0,
+  //     direction: {
+  //       x: Math.cos(angle) * distance,
+  //       y: Math.sin(angle) * distance
+  //     }
+  //   };
+
+  //   setPokemonAnimations(prev => [...prev, newPokemon]);
+  //   
+  //   // Remove after animation completes
+  //   setTimeout(() => {
+  //     setPokemonAnimations(prev => prev.filter(p => p.id !== newPokemon.id));
+  //   }, 2000);
+  // };
+
+  // const triggerTrainerFrenzy = () => {
+  //   setIsTrainerFrenzy(true);
+  //   setFrenzyWave(0);
+  //   
+  //   // Create 10 waves of 10 trainers each, with 1 second between waves
+  //   const spawnWave = (waveIndex: number) => {
+  //     if (waveIndex >= 10) {
+  //       setIsTrainerFrenzy(false);
+  //       return;
+  //     }
+  //     
+  //     setFrenzyWave(waveIndex + 1);
+  //     
+  //     // Spawn 10 trainers for this wave
+  //     for (let i = 0; i < 10; i++) {
+  //       setTimeout(() => ringBell(), i * 100); // Stagger trainers within wave
+  //     }
+  //     
+  //     // Schedule next wave
+  //     setTimeout(() => spawnWave(waveIndex + 1), 1000);
+  //   };
+  //   
+  //   spawnWave(0);
+  // };
+
   const handleBellRing = (isAutoRing = false) => {
     if (isRinging && !isAutoRing) return; // Prevent spam clicking
 
     const now = Date.now();
-    const timeSinceLastClick = now - lastClickTime.current;
     lastClickTime.current = now;
 
     // Determine click quality for manual clicks
     let clickQuality: 'normal' | 'golden' | 'perfect' = 'normal';
     let trainersToAttract = 1;
-    let bonusMultiplier = 1;
 
     if (!isAutoRing) {
       if (perfectClickWindow.current) {
         // Perfect timing during golden flash
         clickQuality = 'perfect';
         trainersToAttract = 2;
-        bonusMultiplier = 1.1;
         setConsecutiveClicks(prev => prev + 1);
+        generateSparkles(true); // Over-the-top sparkles for perfect click
         
         // Check for perfect streak (5 consecutive perfect clicks)
         if (consecutiveClicks >= 4) {
@@ -127,10 +204,11 @@ export function SafariBell({ onRing }: SafariBellProps) {
         // Good timing during glow
         clickQuality = 'golden';
         trainersToAttract = 1;
-        bonusMultiplier = 1.05;
+        generateSparkles(false); // Normal sparkles for good timing
         setConsecutiveClicks(0);
       } else {
         // Normal click
+        generateSparkles(false); // Light sparkles for normal click
         setConsecutiveClicks(0);
       }
     }
@@ -225,34 +303,35 @@ export function SafariBell({ onRing }: SafariBellProps) {
       )}
 
       {/* Main Bell Button */}
-      <motion.button
-        onClick={() => handleBellRing()}
-        onTouchStart={() => handleBellRing()} // Better touch response
-        disabled={isAutoBellActive}
-        animate={{
-          scale: isRinging ? 1.1 : 1,
-          rotate: isRinging ? [0, -10, 10, 0] : 0,
-        }}
-        transition={{
-          duration: 0.3,
-          ease: "easeOut"
-        }}
-        className={`
-          relative w-32 h-32 sm:w-40 sm:h-40 rounded-full 
-          bg-gradient-to-b from-yellow-300 to-yellow-500
-          border-4 border-yellow-600 shadow-lg
-          flex items-center justify-center
-          touch-manipulation select-none
-          ${isAutoBellActive 
-            ? 'opacity-50 cursor-not-allowed' 
-            : 'hover:shadow-xl active:scale-95 cursor-pointer'
-          }
-          transition-all duration-200
-        `}
-        style={{
-          filter: getGlowEffect(),
-        }}
-      >
+      <div className="relative">
+        <motion.button
+          onClick={() => handleBellRing()}
+          onTouchStart={() => handleBellRing()} // Better touch response
+          disabled={isAutoBellActive}
+          animate={{
+            scale: isRinging ? 1.1 : 1,
+            rotate: isRinging ? [0, -10, 10, 0] : 0,
+          }}
+          transition={{
+            duration: 0.3,
+            ease: "easeOut"
+          }}
+          className={`
+            relative w-32 h-32 sm:w-40 sm:h-40 rounded-full 
+            bg-gradient-to-b from-yellow-300 to-yellow-500
+            border-4 border-yellow-600 shadow-lg
+            flex items-center justify-center
+            touch-manipulation select-none
+            ${isAutoBellActive 
+              ? 'opacity-50 cursor-not-allowed' 
+              : 'hover:shadow-xl active:scale-95 cursor-pointer'
+            }
+            transition-all duration-200
+          `}
+          style={{
+            filter: getGlowEffect(),
+          }}
+        >
         {/* Bell Icon */}
         <Bell 
           size={48} 
@@ -281,6 +360,44 @@ export function SafariBell({ onRing }: SafariBellProps) {
           />
         )}
       </motion.button>
+
+      {/* Sparkle Animations */}
+      <AnimatePresence>
+        {sparkles.map((sparkle) => (
+          <motion.div
+            key={sparkle.id}
+            initial={{ 
+              opacity: 0, 
+              scale: 0, 
+              x: sparkle.x,
+              y: sparkle.y,
+              rotate: 0
+            }}
+            animate={{ 
+              opacity: [0, 1, 1, 0], 
+              scale: [0, 1.5, 1, 0],
+              y: sparkle.y - 50,
+              rotate: 360
+            }}
+            exit={{ opacity: 0, scale: 0 }}
+            transition={{ 
+              duration: 0.8,
+              delay: sparkle.delay,
+              ease: "easeOut",
+              rotate: { repeat: 1, duration: 0.8 }
+            }}
+            className="absolute pointer-events-none text-yellow-400 text-xl"
+            style={{
+              left: '50%',
+              top: '50%',
+              transform: 'translate(-50%, -50%)',
+            }}
+          >
+            ✨
+          </motion.div>
+        ))}
+      </AnimatePresence>
+    </div>
 
       {/* Bell Status */}
       <div className="text-center space-y-1">

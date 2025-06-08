@@ -7,9 +7,10 @@ import { NavigationTabs } from './NavigationTabs';
 
 interface GameLayoutProps {
   children: ReactNode;
+  onTabChange?: (tab: 'game' | 'areas' | 'upgrades' | 'achievements') => void;
 }
 
-export function GameLayout({ children }: GameLayoutProps) {
+export function GameLayout({ children, onTabChange }: GameLayoutProps) {
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-100 to-green-200">
       {/* Sticky Header with Key Game Stats */}
@@ -24,7 +25,7 @@ export function GameLayout({ children }: GameLayoutProps) {
       </main>
       
       {/* Bottom Navigation for Mobile */}
-      <NavigationTabs />
+      <NavigationTabs onTabChange={onTabChange} />
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { X, Trophy, Lock, Check } from 'lucide-react';
 import { useAchievementStore } from '@/stores/achievementStore';
 import { ACHIEVEMENTS, calculateAchievementProgress } from '@/data/achievements';
 import { useClientSafeGameStats } from '@/hooks/useClientSafeStore';
+import { Achievement, AchievementReward } from '@/types';
 
 interface AchievementDisplayProps {
   isOpen: boolean;
@@ -28,7 +29,7 @@ export function AchievementDisplay({ isOpen, onClose }: AchievementDisplayProps)
     achievement => achievement.category === selectedCategory
   );
 
-  const getAchievementProgress = (achievement: any) => {
+  const getAchievementProgress = (achievement: Achievement) => {
     const progress = calculateAchievementProgress(achievement, {
       trainersAttracted: gameStats.trainersAttracted,
       totalRevenue: 0, // TODO: Add totalRevenue to gameStats
@@ -42,7 +43,7 @@ export function AchievementDisplay({ isOpen, onClose }: AchievementDisplayProps)
     return Math.min(100, (progress / achievement.requirement.target) * 100);
   };
 
-  const getAchievementStatus = (achievement: any) => {
+  const getAchievementStatus = (achievement: Achievement) => {
     if (achievement.isUnlocked) return 'completed';
     
     const progress = getAchievementProgress(achievement);
@@ -60,7 +61,7 @@ export function AchievementDisplay({ isOpen, onClose }: AchievementDisplayProps)
     }
   };
 
-  const formatReward = (reward: any) => {
+  const formatReward = (reward: AchievementReward) => {
     switch (reward.type) {
       case 'money':
         return `💰 $${reward.value}`;
@@ -111,7 +112,7 @@ export function AchievementDisplay({ isOpen, onClose }: AchievementDisplayProps)
               </div>
             </div>
 
-            <div className="flex flex-col md:flex-row h-[calc(90vh-120px)]">
+            <div className="flex flex-col md:flex-row h-[calc(80vh-120px)]">
               {/* Category Sidebar */}
               <div className="md:w-64 bg-gray-50 border-r border-gray-200">
                 <div className="p-4">

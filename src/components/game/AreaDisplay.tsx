@@ -3,6 +3,7 @@
 import { AreaType } from '@/types';
 import { useAreaPopulation } from '@/stores/pokemonStore';
 import { POKEMON_RARITY_CONFIG } from '@/data/pokemon';
+import { PokemonImage } from '@/components/ui/PokemonImage';
 
 interface AreaDisplayProps {
   area: AreaType;
@@ -100,7 +101,13 @@ export function AreaDisplay({ area, isUnlocked }: AreaDisplayProps) {
                   populationPercent > 20 ? 'bg-orange-100' : 'bg-red-100'}
               `}
             >
-              <div className="text-2xl mb-1">{species.sprite}</div>
+              <div className="flex justify-center mb-1">
+                <PokemonImage 
+                  pokemonName={species.name} 
+                  size="large" 
+                  fallbackEmoji={species.sprite}
+                />
+              </div>
               <div className="text-xs font-medium" style={{ color: getRarityColor(species.rarity) }}>
                 {species.name}
               </div>
