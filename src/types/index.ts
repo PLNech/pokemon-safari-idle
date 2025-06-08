@@ -8,6 +8,8 @@ export type PokemonRarity = 'common' | 'uncommon' | 'rare' | 'ultra_rare' | 'leg
 
 export type TrainerType = 'casual' | 'collector' | 'speedrunner' | 'shiny_hunter';
 
+export type TrainerRarity = 'common' | 'rare' | 'epic' | 'legendary';
+
 export type UpgradeCategory = 'marketing' | 'pokemon' | 'facilities' | 'research';
 
 // Pokemon Types
@@ -47,6 +49,9 @@ export interface Trainer {
   id: string;
   type: TrainerType;
   name: string;
+  rarity?: TrainerRarity;
+  title?: string;
+  nickname?: string;
   currentArea: AreaType;
   entryFee: number;
   itemsPurchased: SafariItem[];

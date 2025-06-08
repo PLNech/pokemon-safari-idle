@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 import { GameState, GamePhase, AreaType, Trainer, Notification, MinigameState } from '@/types';
+import { generateTrainerName } from '@/utils/trainerNames';
 
 interface GameStore extends GameState {
   // Core Actions
@@ -86,16 +87,24 @@ export const useGameStore = create<GameStore>()(
       // TODO: Add visual/audio feedback
       console.log('🔔 Bell rung!');
       
-      // Create a new trainer
+      // Generate a new trainer with random name and type
+      const generatedTrainer = generateTrainerName();
       const newTrainer: Trainer = {
         id: `trainer_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        type: 'casual',
-        name: `Trainer ${state.trainersAttracted + 1}`,
+        type: generatedTrainer.type,
+        name: generatedTrainer.name,
+        rarity: generatedTrainer.rarity,
+        title: generatedTrainer.title,
+        nickname: generatedTrainer.nickname,
         currentArea: 'center',
-        entryFee: 500,
+        entryFee: 500 + (generatedTrainer.rarity === 'legendary' ? 2000 : 
+                         generatedTrainer.rarity === 'epic' ? 1000 :
+                         generatedTrainer.rarity === 'rare' ? 500 : 0),
         itemsPurchased: [],
         pokemonCaught: [],
-        satisfactionRating: 0.8,
+        satisfactionRating: 0.8 + (generatedTrainer.rarity === 'legendary' ? 0.2 : 
+                                   generatedTrainer.rarity === 'epic' ? 0.15 :
+                                   generatedTrainer.rarity === 'rare' ? 0.1 : 0),
         timeInPark: 0,
         isActive: true,
       };

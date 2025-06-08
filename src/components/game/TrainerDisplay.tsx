@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useActiveTrainers } from '@/stores/gameStore';
 import { Trainer } from '@/types';
+import { getTrainerRarityColor, getTrainerRarityBorder } from '@/utils/trainerNames';
 import { gameLoop } from '@/utils/gameLoop';
 import { PokemonImage } from '@/components/ui/PokemonImage';
 
@@ -74,7 +75,9 @@ export function TrainerDisplay() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 20 }}
-                className="bg-blue-50 rounded-lg p-3 border border-blue-100"
+                className={`bg-blue-50 rounded-lg p-3 border transition-all duration-300 ${
+                  trainer.rarity ? getTrainerRarityBorder(trainer.rarity) : 'border-blue-100'
+                }`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
@@ -82,9 +85,16 @@ export function TrainerDisplay() {
                       {getTrainerEmoji(trainer.id)}
                     </div>
                     <div>
-                      <div className="font-medium text-blue-800">
+                      <div className={`font-medium ${
+                        trainer.rarity ? getTrainerRarityColor(trainer.rarity) : 'text-blue-800'
+                      }`}>
                         {trainer.name}
                       </div>
+                      {trainer.rarity && trainer.rarity !== 'common' && (
+                        <div className={`text-xs font-semibold ${getTrainerRarityColor(trainer.rarity)}`}>
+                          {trainer.rarity.toUpperCase()} • {trainer.type.replace('_', ' ').toUpperCase()}
+                        </div>
+                      )}
                       <div className="text-xs text-blue-600">
                         {getStatusText(trainer)}
                       </div>
