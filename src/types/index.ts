@@ -243,12 +243,12 @@ export interface Notification {
 }
 
 // Game Events
-export interface GameEvent {
-  id: string;
-  type: 'trainer_arrival' | 'pokemon_caught' | 'pokemon_spawned' | 'upgrade_purchased' | 'achievement_unlocked';
-  timestamp: Date;
-  data: any;
-}
+export type GameEvent =
+  | { id: string; type: 'trainer_arrival'; timestamp: Date; data: Trainer }
+  | { id: string; type: 'pokemon_caught'; timestamp: Date; data: Pokemon }
+  | { id: string; type: 'pokemon_spawned'; timestamp: Date; data: Pokemon }
+  | { id: string; type: 'upgrade_purchased'; timestamp: Date; data: Upgrade }
+  | { id: string; type: 'achievement_unlocked'; timestamp: Date; data: Achievement };
 
 // UI State
 export interface UIState {

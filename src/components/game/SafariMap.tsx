@@ -74,6 +74,8 @@ export function SafariMap() {
   }, [activeTrainers]);
 
   // Random walk simulation for trainers
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // trainerPositions is updated via setTrainerPositions(prev => ...) which correctly handles dependency.
   useEffect(() => {
     const moveTrainers = () => {
       setTrainerPositions(prev => prev.map(pos => {
@@ -212,7 +214,7 @@ export function SafariMap() {
           className="text-sm border border-gray-300 rounded-lg px-3 py-1 bg-white"
         >
           <option value="all">All Areas</option>
-          {Object.entries(config.areas).map(([areaName, _]) => (
+          {Object.entries(config.areas).map(([areaName]) => (
             <option 
               key={areaName} 
               value={areaName}

@@ -75,7 +75,7 @@ const initialGameState: GameState = {
 };
 
 export const useGameStore = create<GameStore>()(
-  subscribeWithSelector((set, get, _api) => ({
+  subscribeWithSelector((set, get) => ({
     ...initialGameState,
     
     // Core Actions
@@ -216,7 +216,8 @@ export const useGameStore = create<GameStore>()(
       }, notification.duration || 3000);
     },
     
-    removeNotification: (_id: string) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    removeNotification: (id: string) => {
       // Notifications are managed by UI state store
       // This is a placeholder for the notification system
     },
@@ -274,7 +275,8 @@ export const useGameStats = () => useGameStore(gameStatsSelector);
 
 // Auto-save integration hook
 export const useAutoSave = () => {
-  const _gameState = useGameStore();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const gameState = useGameStore();
   
   // TODO: Integrate with save system
   // This will trigger auto-saves when game state changes

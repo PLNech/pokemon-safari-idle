@@ -3,11 +3,18 @@ import { subscribeWithSelector } from 'zustand/middleware';
 import { UpgradeState, Upgrade } from '@/types';
 import { ALL_UPGRADES, calculateUpgradeCost, getNextUpgrade, checkUpgradeUnlocks } from '@/data/upgrades';
 
+interface UpgradeUnlockGameStats {
+  trainersAttracted: number;
+  totalPokemonCaught: number;
+  averageSatisfaction: number;
+  differentSpeciesCaught: number;
+}
+
 interface UpgradeStore extends UpgradeState {
   // Upgrade Actions
   purchaseUpgrade: (upgradeId: string, cost: number) => boolean;
   unlockUpgrade: (upgradeId: string) => void;
-  checkUnlockConditions: (gameStats: any) => void;
+  checkUnlockConditions: (gameStats: UpgradeUnlockGameStats) => void;
   
   // Getters
   getUpgrade: (upgradeId: string) => Upgrade | undefined;
@@ -87,7 +94,7 @@ export const useUpgradeStore = create<UpgradeStore>()(
       }));
     },
     
-    checkUnlockConditions: (gameStats) => {
+    checkUnlockConditions: (gameStats: UpgradeUnlockGameStats) => {
       const unlocksNeeded = checkUpgradeUnlocks(gameStats);
       
       unlocksNeeded.forEach(upgradeId => {
