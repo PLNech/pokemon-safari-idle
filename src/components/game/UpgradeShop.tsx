@@ -6,7 +6,7 @@ import { X, ShoppingCart, Lock, Check } from 'lucide-react';
 import { useGameStore, useGameMoney } from '@/stores/gameStore';
 import { useUpgradeStore } from '@/stores/upgradeStore';
 import { calculateUpgradeCost } from '@/data/upgrades';
-import { UpgradeCategory } from '@/types';
+import { UpgradeCategory, Upgrade, AreaType } from '@/types';
 
 interface UpgradeShopProps {
   isOpen: boolean;
@@ -48,7 +48,7 @@ export function UpgradeShop({ isOpen, onClose }: UpgradeShopProps) {
         
         // Special handling for area unlocks
         if (upgradeId.startsWith('unlock_area_')) {
-          const area = upgradeId.replace('unlock_area_', '') as any;
+          const area = upgradeId.replace('unlock_area_', '') as AreaType;
           useGameStore.getState().unlockArea(area);
         }
       }
@@ -65,7 +65,7 @@ export function UpgradeShop({ isOpen, onClose }: UpgradeShopProps) {
     return `$${cost}`;
   };
 
-  const getUpgradeStatusColor = (upgrade: any) => {
+  const getUpgradeStatusColor = (upgrade: Upgrade) => {
     if (upgrade.isPurchased) return 'border-green-500 bg-green-50';
     if (!upgrade.isUnlocked) return 'border-gray-300 bg-gray-50';
     

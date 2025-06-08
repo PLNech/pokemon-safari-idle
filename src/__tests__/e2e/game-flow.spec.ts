@@ -55,7 +55,6 @@ test.describe('Safari Zone Tycoon - Core Game Flow', () => {
     await page.waitForTimeout(100);
     
     // Since we use Framer Motion, the button might have transform styles
-    const buttonStyles = await bellButton.getAttribute('style');
     // Just check that the button exists and is clickable
     await expect(bellButton).toBeEnabled();
   });

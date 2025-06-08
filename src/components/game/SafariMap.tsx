@@ -32,7 +32,6 @@ export function SafariMap() {
   const activeTrainers = useActiveTrainers();
   const unlockedAreas = useUnlockedAreas();
   const { areaPopulations } = usePokemonStore();
-  const animationFrame = useRef<number>();
 
   const { config, grid } = mapGridData;
   const { width: gridWidth, height: gridHeight } = config.dimensions;
@@ -117,7 +116,7 @@ export function SafariMap() {
 
     const interval = setInterval(moveTrainers, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [config.areas, grid]);
 
   // Spawn Pokemon randomly on the map
   useEffect(() => {
@@ -160,7 +159,7 @@ export function SafariMap() {
 
     const interval = setInterval(spawnPokemon, 3000);
     return () => clearInterval(interval);
-  }, [unlockedAreas, areaPopulations]);
+  }, [unlockedAreas, areaPopulations, config.areas, grid]);
 
   const getAreaColor = (areaName: string) => {
     const colors = {

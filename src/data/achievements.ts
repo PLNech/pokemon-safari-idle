@@ -1,4 +1,4 @@
-import { Achievement } from '@/types';
+import { Achievement, GameState } from '@/types';
 
 export const ACHIEVEMENTS: Achievement[] = [
   // Early Achievements (Drive Engagement)
@@ -324,7 +324,7 @@ export const getCompletableAchievements = (gameStats: {
   });
 };
 
-export const calculateAchievementProgress = (achievement: Achievement, gameStats: any) => {
+export const calculateAchievementProgress = (achievement: Achievement, gameStats: Partial<GameState>) => {
   let current = 0;
   
   switch (achievement.requirement.type) {
@@ -344,7 +344,7 @@ export const calculateAchievementProgress = (achievement: Achievement, gameStats
       }
       break;
     case 'areas_unlocked':
-      current = gameStats.unlockedAreas;
+      current = gameStats.unlockedAreas?.length || 0;
       break;
     default:
       current = 0;

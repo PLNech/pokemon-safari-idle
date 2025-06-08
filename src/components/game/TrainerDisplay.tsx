@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useActiveTrainers } from '@/stores/gameStore';
+import { Trainer } from '@/types';
 import { gameLoop } from '@/utils/gameLoop';
 import { PokemonImage } from '@/components/ui/PokemonImage';
 
@@ -26,7 +27,7 @@ export function TrainerDisplay() {
     return TRAINER_EMOJIS[hash % TRAINER_EMOJIS.length];
   };
 
-  const getStatusText = (trainer: any) => {
+  const getStatusText = (trainer: Trainer) => {
     if (trainer.pokemonCaught.length > 0) {
       const lastCaught = trainer.pokemonCaught[trainer.pokemonCaught.length - 1];
       return `Caught ${lastCaught.name}! ${lastCaught.isShiny ? '✨' : ''}`;
@@ -39,7 +40,7 @@ export function TrainerDisplay() {
     return 'Looking for Pokemon...';
   };
 
-  const getProgressWidth = (trainer: any) => {
+  const getProgressWidth = (trainer: Trainer) => {
     // Progress based on time in park (max 120 seconds)
     return Math.min(100, (trainer.timeInPark / 120) * 100);
   };

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Bell, Settings, Save, RotateCcw } from 'lucide-react';
+import { Settings, Save, RotateCcw } from 'lucide-react';
 import { useClientSafeGameStats } from '@/hooks/useClientSafeStore';
 import { useSaveSystem } from '@/hooks/useSaveSystem';
 import { useGameStore } from '@/stores/gameStore';

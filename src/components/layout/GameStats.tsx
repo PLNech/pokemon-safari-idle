@@ -3,7 +3,6 @@
 import { useGamePhase } from '@/stores/gameStore';
 import { useClientSafeGameStats } from '@/hooks/useClientSafeStore';
 import { useProgressionGoals } from '@/hooks/useProgressionGoals';
-import { POKEMON_RARITY_CONFIG } from '@/data/pokemon';
 
 export function GameStats() {
   const { money, trainersAttracted, totalPokemonCaught, averageSatisfaction } = useClientSafeGameStats();

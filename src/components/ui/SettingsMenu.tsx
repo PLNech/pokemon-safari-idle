@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Volume2, VolumeX, Zap, Save, RotateCcw, Download, Upload, Info } from 'lucide-react';
+import { X, Volume2, Zap, Save, RotateCcw, Download, Upload, Info } from 'lucide-react';
 import { useGameStore } from '@/stores/gameStore';
 import { ConfirmationDialog } from './ConfirmationDialog';
 

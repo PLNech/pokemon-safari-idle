@@ -79,7 +79,7 @@ export function SafariBell({ onRing }: SafariBellProps) {
     }, Math.max(1000, 10000 / autoBellLevel));
 
     return () => clearInterval(autoBellInterval);
-  }, [isAutoBellActive, autoBellLevel]);
+  }, [isAutoBellActive, autoBellLevel, handleBellRing]);
 
   const playBellSound = () => {
     if (!soundEnabled) return;
@@ -87,7 +87,7 @@ export function SafariBell({ onRing }: SafariBellProps) {
     // TODO: Replace with actual bell sound
     // For now, use Web Audio API to generate a bell-like tone
     try {
-      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const audioContext = new (window.AudioContext || (window as Window & typeof globalThis & { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
       
